@@ -65,7 +65,8 @@ class App extends React.Component {
               <p className="popup__error avatar-about-error"></p>
             </div>
             <button type="submit" className="popup__save-button">Сохранить</button>
-          </fieldset> />
+          </fieldset>
+        />
         <PopupWithForm title='Новое место' name='add'
           isOpen={this.state.isAddPlacePopupOpen}
           onClose={this.closeAllPopups}
@@ -81,7 +82,8 @@ class App extends React.Component {
               <p className="popup__error place-link-error"></p>
             </div>
             <button type="submit" className="popup__save-button">Создать</button>
-          </fieldset> />
+          </fieldset>
+        />
         <PopupWithForm title='Обновить аватар' name='editAvatarPhoto'
           isOpen={this.state.isEditAvatarPopupOpen}
           onClose={this.closeAllPopups}
@@ -92,7 +94,8 @@ class App extends React.Component {
               <p className="popup__error avatar-error"></p>
             </div>
             <button type="submit" className="popup__save-button">Сохранить</button>
-          </fieldset> />
+          </fieldset>
+        />
         <PopupWithForm title='Вы уверены?' name='confirm' isOpen={false}
           onClose={this.closeAllPopups}
           children=<div>
@@ -101,12 +104,6 @@ class App extends React.Component {
           </div>
         />
         <ImagePopup card={this.state.selectedCard} onClose={this.closeAllPopups} />
-
-
-        <template id="card">
-
-        </template>
-
       </body>
     )
   };
