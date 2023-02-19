@@ -1,12 +1,14 @@
 import React from 'react';
-import api from '../../utils/Api';
+import api from '../utils/Api';
+import Card from './Card';
 class Main extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             userName: '',
             userDescription: '',
-            userAvatar: ''
+            userAvatar: '',
+            cards: []
         }
     }
     componentDidMount() {
@@ -18,7 +20,20 @@ class Main extends React.Component {
                     userAvatar: data.avatar
                 })
             })
+        api.getCardsInfo()
+            .then((data) => {
+                const newCards = data.map((card) => {
+                    return {
+                        id: card._id,
+                        link: card.link,
+                        name: card.name,
+                        likes: card.likes.length
+                    }
+                })
+                this.setState({ cards: newCards })
+            })
     }
+
     render() {
         return (
             <main className="content">
@@ -35,9 +50,11 @@ class Main extends React.Component {
                     </div>
                     <button className="profile__add-button" type="button" onClick={this.props.onAddPlace}></button>
                 </section>
-
                 <section className="elements">
-
+                    {this.state.cards.map((card) => {
+                        return <Card key={card.id} data={card} onCardClick={this.props.onCardClick}/>
+                    })
+                    }
                 </section>
             </main>
         )

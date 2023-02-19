@@ -1,9 +1,9 @@
 import React from "react";
-import Header from './Header/Header';
-import Main from './Main/Main';
-import Footer from './Footer/Footer';
-import PopupWithForm from './PopupWithForm/PopupWithForm';
-import ImagePopup from './ImagePopup/ImagePopup';
+import Header from './Header';
+import Main from './Main';
+import Footer from './Footer';
+import PopupWithForm from './PopupWithForm';
+import ImagePopup from './ImagePopup';
 import '../index.css';
 
 class App extends React.Component {
@@ -12,7 +12,8 @@ class App extends React.Component {
     this.state = {
       isEditProfilePopupOpen: false,
       isAddPlacePopupOpen: false,
-      isEditAvatarPopupOpen: false
+      isEditAvatarPopupOpen: false,
+      selectedCard: {}
     }
   }
   handleEditAvatarClick = () => {
@@ -26,11 +27,17 @@ class App extends React.Component {
     this.setState({ isAddPlacePopupOpen: true })
   }
 
+  handleCardClick = (data) => {
+    this.setState({ selectedCard: data })
+    //console.log(this.state.selectedCard)
+  }
+
   closeAllPopups = () => {
     this.setState({
       isEditProfilePopupOpen: false,
       isAddPlacePopupOpen: false,
-      isEditAvatarPopupOpen: false
+      isEditAvatarPopupOpen: false,
+      selectedCard: {}
     })
   }
 
@@ -40,7 +47,8 @@ class App extends React.Component {
         <Header />
         <Main onEditProfile={this.handleEditProfileClick}
           onAddPlace={this.handleAddPlaceClick}
-          onEditAvatar={this.handleEditAvatarClick} />
+          onEditAvatar={this.handleEditAvatarClick}
+          onCardClick={this.handleCardClick} />
         <Footer />
         <PopupWithForm title='Редактировать профиль' name='edit'
           isOpen={this.state.isEditProfilePopupOpen}
@@ -92,21 +100,11 @@ class App extends React.Component {
             <button type="submit" className="popup__save-button">Да</button>
           </div>
         />
-        <ImagePopup />
+        <ImagePopup card={this.state.selectedCard} onClose={this.closeAllPopups} />
 
 
         <template id="card">
-          <div className="element">
-            <button className="element__trash" type="button"></button>
-            <img className="element__image" src="#" alt="" />
-            <div className="element__title">
-              <p className="element__text"></p>
-              <div className="element__block-like">
-                <button className="element__like" type="button"></button>
-                <p className="element__count-like">0</p>
-              </div>
-            </div>
-          </div>
+
         </template>
 
       </body>
