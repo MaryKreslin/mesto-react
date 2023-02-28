@@ -88,6 +88,13 @@ class App extends React.Component {
         })
     }
   }
+  handleCardDelete = (card) => {
+    api.deleteCard(card._id)
+    .then((data) => {
+      const newCards = this.state.cards.filter(item=> item._id !== card._id);
+      this.setState({ cards: newCards })
+    })
+  }
 
   closeAllPopups = () => {
     this.setState({
@@ -108,7 +115,9 @@ class App extends React.Component {
             onAddPlace={this.handleAddPlaceClick}
             onEditAvatar={this.handleEditAvatarClick}
             onCardClick={this.handleCardClick}
-            onLikeClick={this.handleCardLike} />
+            onLikeClick={this.handleCardLike}
+            onCardDelete={this.handleCardDelete}
+          />
           <Footer />
           <PopupWithForm title='Редактировать профиль' name='edit'
             isOpen={this.state.isEditProfilePopupOpen}

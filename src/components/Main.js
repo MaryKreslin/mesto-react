@@ -7,27 +7,7 @@ class Main extends React.Component {
   static contextType = CurrentUserContext;
   constructor(props) {
     super(props);
-  /*  this.state = {
-      cards: []
-    }*/
   }
-  /*componentDidMount() {
-    api.getCardsInfo()
-      .then((data) => {
-        const newCards = data.map((card) => {
-          return {
-            id: card._id,
-            link: card.link,
-            name: card.name,
-            likes: card.likes,
-            likesCount: card.likes.length,
-            ownerId: card.owner._id
-          }
-        })
-        this.setState({ cards: newCards })
-      })
-  }*/
-
   render() {
     return (
       <main className="content">
@@ -47,9 +27,11 @@ class Main extends React.Component {
         <section className="elements">
           {this.props.cards.map((card) => {
             return <Card key={card._id}
-            data={card}
-            onCardClick={this.props.onCardClick}
-            onCardLike={this.props.onLikeClick}/>
+              data={card}
+              onCardClick={this.props.onCardClick}
+              onCardLike={this.props.onLikeClick}
+              onCardDelete={this.props.onCardDelete}
+            />
           })
           }
         </section>
