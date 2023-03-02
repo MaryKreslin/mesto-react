@@ -6,6 +6,9 @@ import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import api from "../utils/Api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import EditProfilePopup from "./EditProfilePopup";
+import EditAvatarPopup from "./EditAvatarPopup";
+import AddPlacePopup from "./AddPlacePopup ";
 import '../index.css';
 
 class App extends React.Component {
@@ -26,6 +29,7 @@ class App extends React.Component {
       .then((data) => {
         this.setState({ currentUser: data })
       })
+      .catch((err) => console.log(err))
     api.getCardsInfo()
       .then((data) => {
         const newCards = data.map((card) => {
@@ -40,6 +44,7 @@ class App extends React.Component {
         })
         this.setState({ cards: newCards })
       })
+      .catch((err) => console.log(err))
   }
 
   handleEditAvatarClick = () => {
@@ -55,7 +60,6 @@ class App extends React.Component {
 
   handleCardClick = (data) => {
     this.setState({ selectedCard: data })
-
   }
 
   setCard = (data) => {
@@ -67,7 +71,6 @@ class App extends React.Component {
       likesCount: data.likes.length,
       ownerId: data.owner._id
     }
-
     const newCards = this.state.cards.map((item) => {
       if (item._id === data._id) { return newCard } else { return item }
     })
@@ -81,19 +84,58 @@ class App extends React.Component {
         .then((data) => {
           this.setCard(data)
         })
+        .catch((err) => console.log(err))
     } else {
       api.putLike(card._id)
         .then((data) => {
           this.setCard(data)
         })
+        .catch((err) => console.log(err))
     }
   }
+
   handleCardDelete = (card) => {
     api.deleteCard(card._id)
-    .then((data) => {
-      const newCards = this.state.cards.filter(item=> item._id !== card._id);
-      this.setState({ cards: newCards })
-    })
+      .then((data) => {
+        const newCards = this.state.cards.filter(item => item._id !== card._id);
+        this.setState({ cards: newCards })
+      })
+      .catch((err) => console.log(err))
+  }
+
+  handleUpdateUser = (name, about) => {
+    api.patchUserInfo(name, about)
+      .then((data) => {
+        this.setState({ currentUser: data })
+      })
+      .catch((err) => console.log(err))
+    this.closeAllPopups();
+  }
+
+  handleUpdateAvatar = (newAvatar) => {
+    api.pacthAvatarImg(newAvatar)
+      .then((data) => {
+        this.setState(prevState => ({ currentUser: { ...prevState.currentUser, avatar: data.avatar } }))
+      })
+      .catch((err) => console.log(err))
+    this.closeAllPopups();
+  }
+
+  handleAddPlace = (name, link) => {
+    api.addNewCard(name, link)
+      .then((data) => {
+        const newCard = {
+          _id: data._id,
+          link: data.link,
+          name: data.name,
+          likes: data.likes,
+          likesCount: data.likes.length,
+          ownerId: data.owner._id
+        }
+        this.setState(prevState => ({ cards: [newCard, ...prevState.cards] }))
+      })
+      .catch((err) => console.log(err))
+    this.closeAllPopups();
   }
 
   closeAllPopups = () => {
@@ -119,51 +161,20 @@ class App extends React.Component {
             onCardDelete={this.handleCardDelete}
           />
           <Footer />
-          <PopupWithForm title='Редактировать профиль' name='edit'
+          <EditProfilePopup
             isOpen={this.state.isEditProfilePopupOpen}
             onClose={this.closeAllPopups}
-            children=<fieldset className="popup__fieldset">
-              <div className="popup__field">
-                <input type="text" className="popup__item popup__item_el_name" id="avatar-name" name="avatar-name"
-                  placeholder="Имя" minLength="2" maxLength="40" required />
-                <p className="popup__error avatar-name-error"></p>
-              </div>
-              <div className="popup__field">
-                <input type="text" className="popup__item popup__item_el_about" id="avatar-about" name="avatar-about"
-                  placeholder="Вид деятельности" minLength="2" maxLength="200" required />
-                <p className="popup__error avatar-about-error"></p>
-              </div>
-              <button type="submit" className="popup__save-button">Сохранить</button>
-            </fieldset>
+            onUpdateUser={this.handleUpdateUser}
           />
-          <PopupWithForm title='Новое место' name='add'
+          <AddPlacePopup
             isOpen={this.state.isAddPlacePopupOpen}
             onClose={this.closeAllPopups}
-            children=<fieldset className="popup__fieldset">
-              <div className="popup__field">
-                <input type="text" className="popup__item popup__item_el_name" id="place-name" name="place-name"
-                  placeholder="Название" minLength="2" maxLength="30" required />
-                <p className="popup__error place-name-error"></p>
-              </div>
-              <div className="popup__field">
-                <input type="url" className="popup__item popup__item_el_about" id="place-link" name="place-link"
-                  placeholder="Ссылка на картинку" required />
-                <p className="popup__error place-link-error"></p>
-              </div>
-              <button type="submit" className="popup__save-button">Создать</button>
-            </fieldset>
+            onAddPlace={this.handleAddPlace}
           />
-          <PopupWithForm title='Обновить аватар' name='editAvatarPhoto'
+          <EditAvatarPopup
             isOpen={this.state.isEditAvatarPopupOpen}
             onClose={this.closeAllPopups}
-            children=<fieldset className="popup__fieldset">
-              <div className="popup__field">
-                <input type="url" className="popup__item popup__item_el_about" id="avatar" name="avatar"
-                  placeholder="Ссылка на картинку" required />
-                <p className="popup__error avatar-error"></p>
-              </div>
-              <button type="submit" className="popup__save-button">Сохранить</button>
-            </fieldset>
+            onUpdateAvatar={this.handleUpdateAvatar}
           />
           <PopupWithForm title='Вы уверены?' name='confirm' isOpen={false}
             onClose={this.closeAllPopups}
