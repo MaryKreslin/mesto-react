@@ -9,6 +9,7 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup ";
+import ConfirmPopup from "./ConfirmPopup";
 import '../index.css';
 
 class App extends React.Component {
@@ -18,9 +19,11 @@ class App extends React.Component {
       isEditProfilePopupOpen: false,
       isAddPlacePopupOpen: false,
       isEditAvatarPopupOpen: false,
+      isConfirmPopupOpen: false,
       selectedCard: {},
       currentUser: {},
-      cards: []
+      cards: [],
+      cardToDelete: {}
     }
   }
 
@@ -95,12 +98,18 @@ class App extends React.Component {
   }
 
   handleCardDelete = (card) => {
+    this.setState({ isConfirmPopupOpen: true });
+    this.setState({ cardToDelete: card })
+  }
+
+  handleConfirmSubmit = (card) => {
     api.deleteCard(card._id)
       .then((data) => {
         const newCards = this.state.cards.filter(item => item._id !== card._id);
         this.setState({ cards: newCards })
       })
       .catch((err) => console.log(err))
+    this.closeAllPopups();
   }
 
   handleUpdateUser = (name, about) => {
@@ -143,6 +152,7 @@ class App extends React.Component {
       isEditProfilePopupOpen: false,
       isAddPlacePopupOpen: false,
       isEditAvatarPopupOpen: false,
+      isConfirmPopupOpen: false,
       selectedCard: {}
     })
   }
@@ -176,12 +186,11 @@ class App extends React.Component {
             onClose={this.closeAllPopups}
             onUpdateAvatar={this.handleUpdateAvatar}
           />
-          <PopupWithForm title='Вы уверены?' name='confirm' isOpen={false}
+          <ConfirmPopup
+            isOpen={this.state.isConfirmPopupOpen}
             onClose={this.closeAllPopups}
-            children=<div>
-              <h2 className="popup__title">Вы уверены?</h2>
-              <button type="submit" className="popup__save-button">Да</button>
-            </div>
+            onConfirmSubmit={this.handleConfirmSubmit}
+            cardToDelete={this.state.cardToDelete}
           />
           <ImagePopup card={this.state.selectedCard} onClose={this.closeAllPopups} />
         </body>
