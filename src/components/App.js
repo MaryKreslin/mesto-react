@@ -2,7 +2,6 @@ import React from "react";
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
-import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import api from "../utils/Api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
@@ -23,7 +22,8 @@ class App extends React.Component {
       selectedCard: {},
       currentUser: {},
       cards: [],
-      cardToDelete: {}
+      cardToDelete: {},
+      saveButtonText: 'Сохранить'
     }
   }
 
@@ -102,6 +102,15 @@ class App extends React.Component {
     this.setState({ cardToDelete: card })
   }
 
+  renderLoading(isLoading) {
+    if (isLoading) {
+      this.setState({ saveButtonText: 'Сохранение...' })
+    }
+    else {
+      this.setState({ saveButtonText: 'Сохранить' })
+    }
+  }
+
   handleConfirmSubmit = (card) => {
     api.deleteCard(card._id)
       .then((data) => {
@@ -113,24 +122,29 @@ class App extends React.Component {
   }
 
   handleUpdateUser = (name, about) => {
+    this.renderLoading(true)
     api.patchUserInfo(name, about)
       .then((data) => {
         this.setState({ currentUser: data })
       })
       .catch((err) => console.log(err))
+      .finally(() => { this.renderLoading(false) })
     this.closeAllPopups();
   }
 
   handleUpdateAvatar = (newAvatar) => {
+    this.renderLoading(true)
     api.pacthAvatarImg(newAvatar)
       .then((data) => {
         this.setState(prevState => ({ currentUser: { ...prevState.currentUser, avatar: data.avatar } }))
       })
       .catch((err) => console.log(err))
+      .finally(() => { this.renderLoading(false) })
     this.closeAllPopups();
   }
 
   handleAddPlace = (name, link) => {
+    this.renderLoading(true)
     api.addNewCard(name, link)
       .then((data) => {
         const newCard = {
@@ -144,6 +158,7 @@ class App extends React.Component {
         this.setState(prevState => ({ cards: [newCard, ...prevState.cards] }))
       })
       .catch((err) => console.log(err))
+      .finally(() => { this.renderLoading(false) })
     this.closeAllPopups();
   }
 
@@ -175,16 +190,19 @@ class App extends React.Component {
             isOpen={this.state.isEditProfilePopupOpen}
             onClose={this.closeAllPopups}
             onUpdateUser={this.handleUpdateUser}
+            saveButton={this.state.saveButtonText}
           />
           <AddPlacePopup
             isOpen={this.state.isAddPlacePopupOpen}
             onClose={this.closeAllPopups}
             onAddPlace={this.handleAddPlace}
+            saveButton={this.state.saveButtonText}
           />
           <EditAvatarPopup
             isOpen={this.state.isEditAvatarPopupOpen}
             onClose={this.closeAllPopups}
             onUpdateAvatar={this.handleUpdateAvatar}
+            saveButton={this.state.saveButtonText}
           />
           <ConfirmPopup
             isOpen={this.state.isConfirmPopupOpen}

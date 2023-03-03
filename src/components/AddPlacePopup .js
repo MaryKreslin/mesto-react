@@ -16,6 +16,8 @@ function AddPlacePopup(props) {
 
   function handleAddPlaceSubmit(event) {
     event.preventDefault();
+    setName('');
+    setLink('');
     props.onAddPlace(name, link)
   }
 
@@ -35,7 +37,7 @@ function AddPlacePopup(props) {
             placeholder="Ссылка на картинку" value={link} onChange={handleChangeLink} required />
           <p className="popup__error place-link-error"></p>
         </div>
-        <button type="submit" className="popup__save-button">Создать</button>
+        <button type="submit" className="popup__save-button">{props.saveButton}</button>
       </fieldset>
     />
   )

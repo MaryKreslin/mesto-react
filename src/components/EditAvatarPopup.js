@@ -1,13 +1,9 @@
 import React from "react";
 import PopupWithForm from "./PopupWithForm";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 function EditAvatarPopup(props) {
-  const currentUser = React.useContext(CurrentUserContext);
-  const [avatar, setAvatar] = React.useState(currentUser.avatar);
+  const [avatar, setAvatar] = React.useState('');
   const avatarRef = React.useRef();
-
-  React.useEffect(() => { setAvatar(currentUser.avatar) }, [currentUser]);
 
   function handleChangeAvatar(event) {
     setAvatar(event.target.value)
@@ -15,6 +11,7 @@ function EditAvatarPopup(props) {
 
   function handleSubmit(evt) {
     evt.preventDefault();
+    setAvatar('');
     props.onUpdateAvatar(avatarRef.current.defaultValue)
   }
 
@@ -29,7 +26,7 @@ function EditAvatarPopup(props) {
             placeholder="Ссылка на картинку" value={avatar} onChange={handleChangeAvatar} required />
           <p className="popup__error avatar-error"></p>
         </div>
-        <button type="submit" className="popup__save-button">Сохранить</button>
+        <button type="submit" className="popup__save-button">{props.saveButton}</button>
       </fieldset>
     />
   )

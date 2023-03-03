@@ -26,6 +26,7 @@ function EditProfilePopup(props) {
     props.onUpdateUser(name, description);
   }
 
+
   return (
     <PopupWithForm title='Редактировать профиль' name='edit'
       isOpen={props.isOpen}
@@ -42,7 +43,7 @@ function EditProfilePopup(props) {
             placeholder="Вид деятельности" minLength="2" maxLength="200" required value={description} onChange={handleChangeDescription} />
           <p className="popup__error avatar-about-error"></p>
         </div>
-        <button type="submit" className="popup__save-button">Сохранить</button>
+        <button type="submit" className="popup__save-button">{props.saveButton}</button>
       </fieldset>
     />)
 }
