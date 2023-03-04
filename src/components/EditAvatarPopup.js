@@ -3,7 +3,16 @@ import PopupWithForm from "./PopupWithForm";
 
 function EditAvatarPopup(props) {
   const [avatar, setAvatar] = React.useState('');
+  const [saveButtonText, setSaveButtonText] = React.useState('');
+
   const avatarRef = React.useRef();
+
+  function changeSaveButtonText(ButtonState) {
+    if (ButtonState) { setSaveButtonText('Сохранение...') }
+    else { setSaveButtonText('Сохранить') }
+  }
+
+  React.useEffect(() => { changeSaveButtonText(props.isLoading) }, [props.isLoading])
 
   function handleChangeAvatar(event) {
     setAvatar(event.target.value)
@@ -20,14 +29,14 @@ function EditAvatarPopup(props) {
       isOpen={props.isOpen}
       onClose={props.onClose}
       onSubmit={handleSubmit}
-      children=<fieldset className="popup__fieldset">
+      saveButtonText={saveButtonText}
+      children={<>
         <div className="popup__field">
           <input ref={avatarRef} type="url" className="popup__item popup__item_el_about" id="avatar" name="avatar"
             placeholder="Ссылка на картинку" value={avatar} onChange={handleChangeAvatar} required />
           <p className="popup__error avatar-error"></p>
         </div>
-        <button type="submit" className="popup__save-button">{props.saveButton}</button>
-      </fieldset>
+      </>}
     />
   )
 

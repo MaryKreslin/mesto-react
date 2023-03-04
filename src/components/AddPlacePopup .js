@@ -5,6 +5,7 @@ import PopupWithForm from "./PopupWithForm";
 function AddPlacePopup(props) {
   const [name, setName] = React.useState('');
   const [link, setLink] = React.useState('');
+  const [saveButtonText, setSaveButtonText] = React.useState('');
 
   function handleChangeName(event) {
     setName(event.target.value)
@@ -21,24 +22,47 @@ function AddPlacePopup(props) {
     props.onAddPlace(name, link)
   }
 
+  function changeSaveButtonText(ButtonState) {
+    if (ButtonState) { setSaveButtonText('Сохранение...') }
+    else { setSaveButtonText('Создать') }
+  }
+  React.useEffect(() => { changeSaveButtonText(props.isLoading) }, [props.isLoading])
+
   return (
     <PopupWithForm title='Новое место' name='add'
       isOpen={props.isOpen}
       onClose={props.onClose}
       onSubmit={handleAddPlaceSubmit}
-      children=<fieldset className="popup__fieldset">
-        <div className="popup__field">
-          <input type="text" className="popup__item popup__item_el_name" id="place-name" name="name"
-            placeholder="Название" minLength="2" maxLength="30" value={name} onChange={handleChangeName} required />
-          <p className="popup__error place-name-error"></p>
-        </div>
-        <div className="popup__field">
-          <input type="url" className="popup__item popup__item_el_about" id="place-link" name="link"
-            placeholder="Ссылка на картинку" value={link} onChange={handleChangeLink} required />
-          <p className="popup__error place-link-error"></p>
-        </div>
-        <button type="submit" className="popup__save-button">{props.saveButton}</button>
-      </fieldset>
+      saveButtonText={saveButtonText}
+      children={
+        <>
+          <div className="popup__field">
+            <input
+              type="text"
+              className="popup__item popup__item_el_name"
+              id="place-name"
+              name="name"
+              placeholder="Название"
+              minLength="2"
+              maxLength="30"
+              value={name}
+              onChange={handleChangeName}
+              required />
+            <p className="popup__error place-name-error"></p>
+          </div>
+          <div className="popup__field">
+            <input
+              type="url"
+              className="popup__item popup__item_el_about"
+              id="place-link"
+              name="link"
+              placeholder="Ссылка на картинку"
+              value={link}
+              onChange={handleChangeLink}
+              required />
+            <p className="popup__error place-link-error"></p>
+          </div>
+        </>}
     />
   )
 }

@@ -9,7 +9,6 @@ import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup ";
 import ConfirmPopup from "./ConfirmPopup";
-import '../index.css';
 
 class App extends React.Component {
   constructor(props) {
@@ -23,7 +22,7 @@ class App extends React.Component {
       currentUser: {},
       cards: [],
       cardToDelete: {},
-      saveButtonText: 'Сохранить'
+      isLoading: false
     }
   }
 
@@ -98,53 +97,48 @@ class App extends React.Component {
   }
 
   handleCardDelete = (card) => {
-    this.setState({ isConfirmPopupOpen: true });
-    this.setState({ cardToDelete: card })
-  }
-
-  renderLoading(isLoading) {
-    if (isLoading) {
-      this.setState({ saveButtonText: 'Сохранение...' })
-    }
-    else {
-      this.setState({ saveButtonText: 'Сохранить' })
-    }
+    this.setState({
+      isConfirmPopupOpen: true,
+      cardToDelete: card
+    })
   }
 
   handleConfirmSubmit = (card) => {
+    this.setState({ isLoading: true })
     api.deleteCard(card._id)
       .then((data) => {
         const newCards = this.state.cards.filter(item => item._id !== card._id);
-        this.setState({ cards: newCards })
+        this.setState({ cards: newCards });
+        this.closeAllPopups();
       })
       .catch((err) => console.log(err))
-    this.closeAllPopups();
+      .finally(() => { this.setState({ isLoading: false }) })
   }
 
   handleUpdateUser = (name, about) => {
-    this.renderLoading(true)
+    this.setState({ isLoading: true })
     api.patchUserInfo(name, about)
       .then((data) => {
-        this.setState({ currentUser: data })
+        this.setState({ currentUser: data });
+        this.closeAllPopups();
       })
       .catch((err) => console.log(err))
-      .finally(() => { this.renderLoading(false) })
-    this.closeAllPopups();
+      .finally(() => { this.setState({ isLoading: false }) })
   }
 
   handleUpdateAvatar = (newAvatar) => {
-    this.renderLoading(true)
+    this.setState({ isLoading: true })
     api.pacthAvatarImg(newAvatar)
       .then((data) => {
-        this.setState(prevState => ({ currentUser: { ...prevState.currentUser, avatar: data.avatar } }))
+        this.setState(prevState => ({ currentUser: { ...prevState.currentUser, avatar: data.avatar } }));
+        this.closeAllPopups();
       })
       .catch((err) => console.log(err))
-      .finally(() => { this.renderLoading(false) })
-    this.closeAllPopups();
+      .finally(() => { this.setState({ isLoading: false }) })
   }
 
   handleAddPlace = (name, link) => {
-    this.renderLoading(true)
+    this.setState({ isLoading: true })
     api.addNewCard(name, link)
       .then((data) => {
         const newCard = {
@@ -156,10 +150,10 @@ class App extends React.Component {
           ownerId: data.owner._id
         }
         this.setState(prevState => ({ cards: [newCard, ...prevState.cards] }))
+        this.closeAllPopups();
       })
       .catch((err) => console.log(err))
-      .finally(() => { this.renderLoading(false) })
-    this.closeAllPopups();
+      .finally(() => { this.setState({ isLoading: false }) })
   }
 
   closeAllPopups = () => {
@@ -175,7 +169,7 @@ class App extends React.Component {
   render() {
     return (
       <CurrentUserContext.Provider value={this.state.currentUser}>
-        <body className="page">
+        <div className="page">
           <Header />
           <Main cards={this.state.cards}
             onEditProfile={this.handleEditProfileClick}
@@ -190,28 +184,29 @@ class App extends React.Component {
             isOpen={this.state.isEditProfilePopupOpen}
             onClose={this.closeAllPopups}
             onUpdateUser={this.handleUpdateUser}
-            saveButton={this.state.saveButtonText}
+            isLoading={this.state.isLoading}
           />
           <AddPlacePopup
             isOpen={this.state.isAddPlacePopupOpen}
             onClose={this.closeAllPopups}
             onAddPlace={this.handleAddPlace}
-            saveButton={this.state.saveButtonText}
+            isLoading={this.state.isLoading}
           />
           <EditAvatarPopup
             isOpen={this.state.isEditAvatarPopupOpen}
             onClose={this.closeAllPopups}
             onUpdateAvatar={this.handleUpdateAvatar}
-            saveButton={this.state.saveButtonText}
+            isLoading={this.state.isLoading}
           />
           <ConfirmPopup
             isOpen={this.state.isConfirmPopupOpen}
             onClose={this.closeAllPopups}
             onConfirmSubmit={this.handleConfirmSubmit}
             cardToDelete={this.state.cardToDelete}
+            isLoading={this.state.isLoading}
           />
           <ImagePopup card={this.state.selectedCard} onClose={this.closeAllPopups} />
-        </body>
+        </div>
       </CurrentUserContext.Provider >
     )
   };

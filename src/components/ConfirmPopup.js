@@ -3,6 +3,15 @@ import PopupWithForm from "./PopupWithForm";
 
 function ConfirmPopup(props) {
 
+  const [saveButtonText, setSaveButtonText] = React.useState('');
+
+  function changeSaveButtonText(ButtonState) {
+    if (ButtonState) { setSaveButtonText('Удаление...') }
+    else { setSaveButtonText('Да') }
+  }
+  React.useEffect(() => { changeSaveButtonText(props.isLoading) }, [props.isLoading])
+
+
   function onConfirm(event) {
     event.preventDefault();
     props.onConfirmSubmit(props.cardToDelete)
@@ -13,9 +22,7 @@ function ConfirmPopup(props) {
       isOpen={props.isOpen}
       onClose={props.onClose}
       onSubmit={onConfirm}
-      children=<fieldset className="popup__fieldset">
-        <button type="submit" className="popup__save-button">Да</button>
-      </fieldset>
+      saveButtonText={saveButtonText}
     />
   )
 }
