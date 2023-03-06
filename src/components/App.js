@@ -10,6 +10,8 @@ import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup ";
 import ConfirmPopup from "./ConfirmPopup";
 
+
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -52,9 +54,9 @@ class App extends React.Component {
   handleEditAvatarClick = () => {
     this.setState({ isEditAvatarPopupOpen: true })
   }
+
   handleEditProfileClick = () => {
     this.setState({ isEditProfilePopupOpen: true })
-
   }
   handleAddPlaceClick = () => {
     this.setState({ isAddPlacePopupOpen: true })
